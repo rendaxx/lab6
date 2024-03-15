@@ -1,3 +1,3 @@
 public interface ISend {
-    void send();
+    void send(String line);
 }
