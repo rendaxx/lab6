@@ -14,9 +14,18 @@ public class Controller {
     BufferedReader in;
     PrintWriter out;
 
-    void showPS() {
-        out.println("lab6>");
+    public Controller(ISend sender, IGetResponse receiver, InputStream inputStream, OutputStream outputStream) {
+        this.sender = sender;
+        this.receiver = receiver;
+        in = new BufferedReader(new InputStreamReader(inputStream));
+        out = new PrintWriter(outputStream);
     }
+
+    void showPS() {
+        out.print("lab6>");
+        out.flush();
+    }
+
     String read() {
         String line = null;
         try {
@@ -34,9 +43,12 @@ public class Controller {
     String getResponse() {
         return receiver.getResponse();
     }
+
     void print(String response) {
+        log.info("Printing message...");
         if (response != null) {
             out.println(response);
+            out.flush();
         }
     }
 
@@ -50,10 +62,6 @@ public class Controller {
             send(line);
 
             String response = getResponse();
-
-            if (response == null) {
-                log.warning("For some reason response is null");
-            }
 
             print(response);
         }

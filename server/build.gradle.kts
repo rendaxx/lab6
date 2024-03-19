@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "ru.rendaxx"
-version = "unspecified"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -13,6 +13,8 @@ repositories {
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    implementation("com.opencsv:opencsv:5.9")
+    implementation(project(":common"))
 }
 
 tasks.test {
