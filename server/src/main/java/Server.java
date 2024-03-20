@@ -1,6 +1,7 @@
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import misc.Request;
+import misc.RequestParser;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.*;
@@ -44,6 +45,14 @@ public class Server implements Runnable {
                 } else if (key.isReadable()) {
                     handleRequest(buffer, key);
                 }
+
+                if (System.in.available() > 0) {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+                    String line = bufferedReader.readLine();
+                    Request request = RequestParser.parse(line, new MatcherWithSave());
+                    buffer = ByteBuffer.wrap(SerializationUtils.serialize(request));
+                    handleRequest(buffer);
+                }
             }
         }
     }
@@ -57,6 +66,13 @@ public class Server implements Runnable {
         commandManager.execute(request, out);
         buffer = ByteBuffer.wrap(out.toByteArray()).duplicate();
         client.write(buffer);
+    }
+
+    private void handleRequest(ByteBuffer buffer) throws IOException {
+        Request request = SerializationUtils.deserialize(buffer.array());
+        if (request == null) return;
+
+        commandManager.execute(request, System.out);
     }
 
     private Request getRequest(ByteBuffer buffer, SocketChannel client) throws IOException {
