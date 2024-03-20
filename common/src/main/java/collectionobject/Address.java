@@ -12,9 +12,9 @@ import java.util.Objects;
 @Getter
 @Setter
 public class Address implements Serializable {
-    @CsvBindByPosition(position = 7)
+    @CsvBindByPosition(position = 9)
     String street;
-    @CsvBindByPosition(position = 8)
+    @CsvBindByPosition(position = 10)
     String zipCode;
 
     public Address() {

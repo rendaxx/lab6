@@ -1,11 +1,15 @@
 package collectionobject;
 
 import com.opencsv.bean.CsvBindByPosition;
+import com.opencsv.bean.CsvDate;
 import com.opencsv.bean.CsvRecurse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Random;
@@ -13,27 +17,33 @@ import java.util.Random;
 @Setter
 @Getter
 @AllArgsConstructor
-public class Organization implements Comparable<Organization> {
-    private Long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+public class Organization implements Comparable<Organization>, Serializable {
     @CsvBindByPosition(position = 0)
+    private Long id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+    @CsvBindByPosition(position = 1)
     private String name; //Поле не может быть null, Строка не может быть пустой
     @CsvRecurse
     private Coordinates coordinates; //Поле не может быть null
-    private Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
-    @CsvBindByPosition(position = 3)
-    private long annualTurnover; //Значение поля должно быть больше 0
+    @CsvDate(value = "yyyy-MM-dd")
     @CsvBindByPosition(position = 4)
-    private String fullName; //Длина строки не должна быть больше 1311, Поле может быть null
+    private LocalDate creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     @CsvBindByPosition(position = 5)
-    private long employeesCount; //Значение поля должно быть больше 0
+    private long annualTurnover; //Значение поля должно быть больше 0
     @CsvBindByPosition(position = 6)
+    private String fullName; //Длина строки не должна быть больше 1311, Поле может быть null
+    @CsvBindByPosition(position = 7)
+    private long employeesCount; //Значение поля должно быть больше 0
+    @CsvBindByPosition(position = 8)
     private OrganizationType type; //Поле может быть null
     @CsvRecurse
     private Address postalAddress; //Поле не может быть null
 
+    @Serial
+    private static final long serialVersionUID = 1231545L;
+
     public Organization() {
         id = new Random().nextLong(Long.MAX_VALUE);
-        creationDate = new Date();
+        creationDate = LocalDate.now();
     }
 
     /**

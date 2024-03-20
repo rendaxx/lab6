@@ -5,17 +5,18 @@ import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
-/**
- * Class for saving and reading collection of organizations to/from csv file.
- */
+
+@Log
 public class CsvOrganizationStreamer implements CollectionStreamer<LinkedHashSet<Organization>> {
 
     private static CsvOrganizationStreamer singleton;
@@ -27,7 +28,9 @@ public class CsvOrganizationStreamer implements CollectionStreamer<LinkedHashSet
         return singleton;
     }
 
-    private CsvOrganizationStreamer() {}
+    private CsvOrganizationStreamer() {
+        pathToFile = Paths.get("D:\\projects\\lab6\\server\\src\\main\\resources\\data.csv");
+    }
 
     public void setPathToFile(Path p) {
         this.pathToFile = p;
@@ -36,7 +39,8 @@ public class CsvOrganizationStreamer implements CollectionStreamer<LinkedHashSet
     @Override
     public void saveToFile(LinkedHashSet<Organization> collection) {
         if (pathToFile == null || Files.notExists(pathToFile)) {
-            // TODO
+            log.warning("File not found");
+            return;
         }
         try (Writer writer = new PrintWriter(pathToFile.toFile())) {
             StatefulBeanToCsv<Organization> beanToCsv = new StatefulBeanToCsvBuilder<Organization>(writer)
@@ -52,7 +56,8 @@ public class CsvOrganizationStreamer implements CollectionStreamer<LinkedHashSet
     @Override
     public LinkedHashSet<Organization> readFromFile() {
         if (pathToFile == null || Files.notExists(pathToFile)) {
-            // TODO
+            log.warning("File not found");
+            return new LinkedHashSet<>();
         }
         try {
             return new CsvToBeanBuilder<>(Files.newBufferedReader(pathToFile))

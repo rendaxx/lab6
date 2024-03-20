@@ -4,6 +4,7 @@ import misc.CollectionServer;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -29,6 +30,8 @@ public class OrganizationManager implements CollectionServer {
     private OrganizationManager() {
         organizations = new LinkedHashSet<>();
         lastInitTime = LocalDateTime.now();
+        collectionStreamer = CsvOrganizationStreamer.getInstance();
+        load();
     }
     
     public void deleteInvalidElements() {
@@ -42,6 +45,8 @@ public class OrganizationManager implements CollectionServer {
     @Override
     public void addElement(Organization organization) {
         organizations.add(organization);
+        out.println("Successfully added");
+        out.flush();
     }
     
     @Override
@@ -72,7 +77,7 @@ public class OrganizationManager implements CollectionServer {
         }
         Organization element = answer.get();
         Long tempId = element.getId();
-        Date tempDate = element.getCreationDate();
+        LocalDate tempDate = element.getCreationDate();
         element = organization;
         element.setId(tempId);
         element.setCreationDate(tempDate);
@@ -113,11 +118,15 @@ public class OrganizationManager implements CollectionServer {
     @Override
     public void removeGreater(Organization organization) {
         organizations.stream().filter(o -> o.compareTo(organization) > 0).forEach(organizations::remove);
+        out.println("Successfully removed");
+        out.flush();
     }
 
     @Override
     public void removeLower(Organization organization) {
         organizations.stream().filter(o -> o.compareTo(organization) < 0).forEach(organizations::remove);
+        out.println("Successfully removed");
+        out.flush();
     }
     @Override
     public void sumOfAnnual() {

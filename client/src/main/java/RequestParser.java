@@ -3,6 +3,10 @@ import commands.Command;
 import lombok.extern.java.Log;
 import misc.Request;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 @Log
 public class RequestParser {
     public static Request parse(String str) {
@@ -10,41 +14,53 @@ public class RequestParser {
         CommandInput input = new CommandInput(str);
 
         Command command = new CommandMatcher().match(input);
+
         if (command == null) {
-            log.warning("Command not found");
+            System.out.println("Command not found");
             return null;
         }
 
-        if ((input.getArgs() == null) != (command.requiredArgs() == null)) {
-            log.warning("Next arguments required to run this command: " + command.requiredArgs());
-            return null;
-        }
-
-        if (input.getArgs() == null) {
+        if (command.requiredArgs() == null) {
             return new Request(command);
         }
 
-        if (input.getArgs().length != command.requiredArgs().size()) {
-            log.warning("Next arguments required to run this command: " + command.requiredArgs());
+        List<String> noOrg = new ArrayList<>(command.requiredArgs());
+        noOrg.remove("Organization");
+
+        if ((input.getArgs() == null) != noOrg.isEmpty()) {
+            System.out.println("Next arguments required to run this command: " + command.requiredArgs());
             return null;
         }
 
-        Object[] objects = new Object[input.getArgs().length];
-        for (int i = 0; i < input.getArgs().length; ++i) {
+        if ((input.getArgs() != null) && (input.getArgs().length != noOrg.size())) {
+            System.out.println("Next arguments required to run this command: " + command.requiredArgs());
+            return null;
+        }
+
+        Object[] objects = new Object[command.requiredArgs().size()];
+        for (int i = 0; i < command.requiredArgs().size(); ++i) {
             switch (command.requiredArgs().get(i)) {
                 case "Long":
                     try {
                         objects[i] = Long.parseLong(input.getArgs()[i]);
                     } catch (NumberFormatException e) {
-                        log.warning("Can't parse provided id");
+                        System.out.println("Can't parse provided id");
                         return null;
                     }
+                    break;
                 case "Organization":
-                    objects[i] = CsvParser.parse(input.getArgs()[i]);
-                    if (objects[i] == null) {
-                        log.warning("Can't parse provided Human");
-                        return null;
+                    try {
+                        objects[i] = new OrganizationBuilder(new InterrogatorCLI()).setName()
+                                .setCoordinates()
+                                .setAnnualTurnover()
+                                .setFullName()
+                                .setEmployeesCount()
+                                .setType()
+                                .setPostalAddress().build();
+                    } catch (IOException e) {
+                        log.warning("Error while creating Organization");
                     }
+                    break;
                 case "String":
                     objects[i] = input.getArgs()[i];
             }

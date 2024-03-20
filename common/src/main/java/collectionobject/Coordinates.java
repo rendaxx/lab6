@@ -12,9 +12,9 @@ import java.util.Objects;
 @Getter
 @Setter
 public class Coordinates implements Serializable {
-    @CsvBindByPosition(position = 1)
-    Double x;
     @CsvBindByPosition(position = 2)
+    Double x;
+    @CsvBindByPosition(position = 3)
     Double y;
 
     public Coordinates() {
