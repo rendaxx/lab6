@@ -1,3 +1,4 @@
+import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import misc.Request;
 import org.apache.commons.lang3.SerializationUtils;
@@ -11,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Set;
 @Log
-public class Server {
+public class Server implements Runnable {
     Selector selector;
     ServerSocketChannel serverSocket;
     CommandManager commandManager;
@@ -27,8 +28,9 @@ public class Server {
         selector = Selector.open();
         serverSocket.register(selector, SelectionKey.OP_ACCEPT);
     }
-
-    public void run() throws IOException {
+    @SneakyThrows
+    @Override
+    public void run() {
         while (true) {
             ByteBuffer buffer = ByteBuffer.allocate(4096);
             selector.select();

@@ -32,7 +32,7 @@ public class HelpCommand extends Command implements Serializable {
 
     @Override
     public void run(Object... args) {
-        PrintWriter out = new PrintWriter((ByteArrayOutputStream) args[0]);
+        PrintWriter out = new PrintWriter((OutputStream) args[0]);
         commandByName.values().forEach(out::println);
         out.flush();
     }

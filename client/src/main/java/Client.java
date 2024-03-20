@@ -1,10 +1,10 @@
 import lombok.extern.java.Log;
+import misc.CommandMatcher;
 import misc.Request;
+import misc.RequestParser;
 import org.apache.commons.lang3.SerializationUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -14,10 +14,6 @@ public class Client implements ISend, IGetResponse {
     private SocketChannel client;
     private ByteBuffer buffer;
     private String response;
-
-    public Client() {
-
-    }
 
     public void connectTo(String hostname, int port) {
         try {
@@ -51,7 +47,7 @@ public class Client implements ISend, IGetResponse {
 
     @Override
     public void send(String msg) {
-        Request request = RequestParser.parse(msg);
+        Request request = RequestParser.parse(msg, new CommandMatcher());
         if (request == null) return;
         try {
             wrapRequest(request);

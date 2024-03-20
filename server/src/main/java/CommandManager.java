@@ -22,6 +22,5 @@ public class CommandManager {
         command.setCollectionServer(collectionServer);
         collectionServer.changeOutputStream(out);
         command.run(request.getObjects());
-        collectionServer.save();
     }
 }

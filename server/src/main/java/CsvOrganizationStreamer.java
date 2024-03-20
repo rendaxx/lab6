@@ -48,6 +48,7 @@ public class CsvOrganizationStreamer implements CollectionStreamer<LinkedHashSet
                     .build();
 
             beanToCsv.write(collection.stream());
+            log.info("Saved successfully");
         } catch (IOException | CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
             // TODO
         }

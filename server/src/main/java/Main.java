@@ -8,6 +8,8 @@ public class Main {
         CommandManager commandManager = new CommandManager(organizationManager);
         Server server = new Server(commandManager);
         server.init();
-        server.run();
+        Thread t1 = new Thread(server);
+        t1.start();
+        new ServerConsole(commandManager).repl();
     }
 }
